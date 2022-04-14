@@ -1,0 +1,318 @@
+# Pattern matching clinic
+
+## the = operator
+
+match
+
+```elixir
+1 = 2
+```
+
+## lists
+
+for lists, you can match elements positionally.
+
+```elixir
+[one, two] = [1, 2]
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+[1, 2]
+```
+
+```elixir
+two
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+2
+```
+
+```elixir
+one
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+1
+```
+
+```elixir
+"#{one} and #{two}"
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+"1 and 2"
+```
+
+```elixir
+list = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0]
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+[1, 2, 3, 4, 5, 6, 7, 8, 9, 0]
+```
+
+```elixir
+[h1, h2 | t] = list
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+[1, 2, 3, 4, 5, 6, 7, 8, 9, 0]
+```
+
+```elixir
+"#{h1}, #{h2} and #{inspect(t)}"
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+"1, 2 and [3, 4, 5, 6, 7, 8, 9, 0]"
+```
+
+```elixir
+empty = []
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+[]
+```
+
+```elixir
+zero = [0 | empty]
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+[0]
+```
+
+```elixir
+nine = [9 | zero]
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+[9, 0]
+```
+
+```elixir
+defmodule Mymath do
+  def count([_h | t]) do
+    1 + count(t)
+  end
+
+  def count([]) do
+    0
+  end
+end
+
+IO.puts(Mymath.count([]))
+
+IO.puts(Mymath.count([1, 2, 3]))
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+0
+3
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+:ok
+```
+
+## Function heads and Binding names
+
+write a function called `same/2` with two heads. Should return true if 1st and 2nd arg are the same, and false otherwise.
+
+```elixir
+defmodule MyLogic do
+  def same(a, a), do: true
+  def same(_, _), do: false
+end
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+{:module, MyLogic, <<70, 79, 82, 49, 0, 0, 4, ...>>, {:same, 2}}
+```
+
+```elixir
+MyLogic.same(1, 2)
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+false
+```
+
+```elixir
+%{person: person} = %{person: "Bob"}
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+%{person: "Bob"}
+```
+
+```elixir
+person_map = %{person: "Bob", age: 1}
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+%{age: 1, person: "Bob"}
+```
+
+```elixir
+%{person: person, age: age} = %{person: "Bob"}
+```
+
+```elixir
+%{person: person} = %{person: "Bob", age: 1}
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+%{age: 1, person: "Bob"}
+```
+
+```elixir
+person
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+"Bob"
+```
+
+```elixir
+defmodule BindingExample do
+  def function(%{person: name, age: 1} = person_map) do
+    "#{name} and #{inspect(person_map)}"
+  end
+end
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+{:module, BindingExample, <<70, 79, 82, 49, 0, 0, 6, ...>>, {:function, 1}}
+```
+
+```elixir
+BindingExample.function(%{person: "Joe", age: 1, blar: true})
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+"Joe and %{age: 1, blar: true, person: \"Joe\"}"
+```
+
+```elixir
+%{person: name, age: 1} = %{person: "Joe", age: 1, blar: true}
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+%{age: 1, blar: true, person: "Joe"}
+```
+
+```elixir
+%{person: name, age: 2} = %{person: "Joe", age: 1, blar: true}
+```
+
+## strings and matching
+
+you can...
+
+```elixir
+{left, right} = {"ab", "cd"}
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+{"ab", "cd"}
+```
+
+```elixir
+"ab" <> right = "abcd"
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+"abcd"
+```
+
+### subtopic: strings are binaries
+
+```elixir
+?a
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+97
+```
+
+```elixir
+<<?a, ?b, ?c>>
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+"abc"
+```
+
+```elixir
+[?a, ?b, ?c]
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+'abc'
+```
+
+## questions
+
+julia's homework: report back on binary pattern matching
+
+```elixir
+# pin operator does not allow rebinding
+a = 2
+2 = a
+^a = 3
+```
